@@ -3,7 +3,9 @@
 source /venv/main/bin/activate
 COMFYUI_DIR=${WORKSPACE}/ComfyUI
 CIVIT_CLI_DIR=${WORKSPACE}/civitai-models-cli
-CIVIT_CLI_ENV=~/.civitai-model-manager/.env
+MODELS_DIR=${COMFYUI_DIR}/models/
+CIVIT_ENV_DIR=~/.civitai-model-manager
+CIVIT_CLI_ENV=${CIVIT_ENV_DIR}/.env
 APT_PACKAGES=()
 PIP_PACKAGES=()
 NODES=(
@@ -116,6 +118,7 @@ function provisioning_civit_models_cli() {
     cd civitai-models-cli
     pip install .
     #todo create .env file containing CIVITAI_TOKEN and MODELS_DIR
+    mkdir -p $CIVIT_ENV_DIR
     cp sample.env $CIVIT_CLI_ENV
     set_env_details $CIVIT_CLI_ENV
     civit_depends
@@ -125,7 +128,7 @@ set_env_details() {
     if [ -f "$file" ] && [ -r "$file" ]; then
         # Update branch, hash, and version in the .env file
         sed -i "s/^CIVITAI_TOKEN=.*/GIT_BRANCH=\"$CIVITAI_TOKEN\"/" "$file"
-        sed -i "s/^MODELS_DIR=.*/MODELS_DIR=\"${COMFYUI_DIR}/models/\"/" "$file"
+        sed -i "s/^MODELS_DIR=.*/MODELS_DIR=\"$MODELS_DIR\"/" "$file"
         echo "Updated .env file: $file"
     else
         echo "Error: File does not exist or is not readable: $file"
