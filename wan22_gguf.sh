@@ -2,7 +2,8 @@
 
 source /venv/main/bin/activate
 COMFYUI_DIR=${WORKSPACE}/ComfyUI
-
+CIVIT_CLI_DIR=${WORKSPACE}/civitai-models-cli
+CIVIT_CLI_ENV=~/.civitai-model-manager/.env
 APT_PACKAGES=()
 PIP_PACKAGES=()
 NODES=(
@@ -42,50 +43,34 @@ UNET_MODELS=(
 )
 
 LORA_MODELS=(
-    "https://civitai.com/api/download/models/14856?type=Model&format=SafeTensor&size=full&fp=fp16"
-    "https://civitai.com/api/download/models/32988?type=Model&format=SafeTensor&size=full&fp=fp16"
     "https://huggingface.co/lightx2v/Wan2.2-Lightning/blob/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors"
     "https://huggingface.co/lightx2v/Wan2.2-Lightning/blob/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors"
-    # fac|/\[
-    "https://civitai.com/api/download/models/2103699?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2103700?type=Model&format=SafeTensor"
-    # |\|$f\/\/
-    "https://civitai.com/api/download/models/2073605?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2083303?type=Model&format=SafeTensor"
-    # m|$$
-    "https://civitai.com/api/download/models/2098405?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2098396?type=Model&format=SafeTensor"
-
-    # c|_|/\/\$h[]t
-    "https://civitai.com/api/download/models/2116027?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2116008?type=Model&format=SafeTensor"
-
-    # set reveal - high
-    "https://civitai.com/api/download/models/2134314?type=Model&format=SafeTensor"
-    # c[]\/\/g|r[_
-    "https://civitai.com/api/download/models/2127912?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2127901?type=Model&format=SafeTensor"
-
-    "https://civitai.com/api/download/models/2127912?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2127901?type=Model&format=SafeTensor"
-
-    # ppp[_/\Y
-    "https://civitai.com/api/download/models/2087124?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2087173?type=Model&format=SafeTensor"
-
-    # [>[-[-pthr[]/\t
-    "https://civitai.com/api/download/models/2124073?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2122049?type=Model&format=SafeTensor"
-
-    # r$c
-    "https://civitai.com/api/download/models/2145156?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2145089?type=Model&format=SafeTensor"
-
-    # pre$$
-    "https://civitai.com/api/download/models/2122806?type=Model&format=SafeTensor"
-    "https://civitai.com/api/download/models/2122834?type=Model&format=SafeTensor"
 )
-
+CIVIT_MODELS=(
+    #"https://civitai.com/api/download/models/2057106?type=Archive&format=Other"
+    #"https://civitai.com/api/download/attachments/407126"
+    1486
+    32988
+    2103699
+    2103700
+    2073605
+    2083303
+    2098405
+    2098396
+    2116027
+    2116008
+    2134314
+    2127912
+    2127901
+    2087124
+    2087173
+    2124073
+    2122049
+    2145156
+    2145089
+    2122806
+    2122834
+)
 DIFFUSION_MODELS=(
     #"https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors"
@@ -114,8 +99,37 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/loras" "${LORA_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/clip" "${CLIP_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
-
+    provisioning_civit_models_cli
     provisioning_print_end
+}
+function civit_depends() {
+    if [[ -n $CIVIT_MODELS ]]; then
+        for pkg in "${CIVIT_MODELS[@]}"; do
+            civitai-models download "$pkg"
+        done
+    fi
+}
+
+function provisioning_civit_models_cli() {
+    cd $WORKSPACE
+    git clone https://github.com/regiellis/civitai-models-cli.git
+    cd civitai-models-cli
+    pip install .
+    #todo create .env file containing CIVITAI_TOKEN and MODELS_DIR
+    cp sample.env $CIVIT_CLI_ENV
+    set_env_details $CIVIT_CLI_ENV
+    civit_depends
+}
+set_env_details() {
+    local file="$1"
+    if [ -f "$file" ] && [ -r "$file" ]; then
+        # Update branch, hash, and version in the .env file
+        sed -i "s/^CIVITAI_TOKEN=.*/GIT_BRANCH=\"$CIVITAI_TOKEN\"/" "$file"
+        sed -i "s/^MODELS_DIR=.*/MODELS_DIR=\"${COMFYUI_DIR}/models/\"/" "$file"
+        echo "Updated .env file: $file"
+    else
+        echo "Error: File does not exist or is not readable: $file"
+    fi
 }
 
 function provisioning_get_apt_packages() {
