@@ -7,11 +7,27 @@ MODELS_DIR=${COMFYUI_DIR}/models/
 CIVIT_ENV_DIR=~/.civitai-model-manager
 CIVIT_CLI_ENV=${CIVIT_ENV_DIR}/.env
 APT_PACKAGES=()
-PIP_PACKAGES=()
+PIP_PACKAGES=(
+    "sageattention"
+)
 NODES=(
+    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
+    "https://github.com/cubiq/ComfyUI_essentials"
+    "https://github.com/yolain/ComfyUI-Easy-Use"
+    "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation"
     "https://github.com/city96/ComfyUI-GGUF"
+    "https://github.com/chrisgoringe/cg-image-filter"
+    "https://github.com/kijai/ComfyUI-KJNodes"
+    "https://github.com/chflame163/ComfyUI_LayerStyle"
+    "https://github.com/aria1th/ComfyUI-LogicUtils"
+    "https://github.com/Comfy-Org/ComfyUI-Manager"
+    "https://github.com/stavsap/comfyui-ollama"
+    "https://github.com/1038lab/ComfyUI-RMBG"
+    "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
     "https://github.com/kijai/ComfyUI-WanVideoWrapper"
     "https://github.com/ClownsharkBatwing/RES4LYF"
+    "https://github.com/rgthree/rgthree-comfy"
+    "https://github.com/ltdrdata/was-node-suite-comfyui"
 )
 
 WORKFLOWS=(
