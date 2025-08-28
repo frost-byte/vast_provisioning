@@ -43,7 +43,10 @@ VAE_MODELS=(
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan2.2_vae.safetensors"
 )
-
+CLIP_VISION_MODELS=(
+    # add clip vision for wan2.2
+    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
+)
 CLIP_MODELS=(
     # "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors"
     # "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
@@ -115,6 +118,7 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/text_encoders" "${TEXT_ENCODERS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/loras" "${LORA_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/clip" "${CLIP_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/clip_vision" "${CLIP_VISION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
     provisioning_civit_models_cli
     provisioning_print_end
@@ -143,7 +147,7 @@ set_env_details() {
     if [ -f "$file" ] && [ -r "$file" ]; then
         # Update branch, hash, and version in the .env file
         sed -i "s/^CIVITAI_TOKEN=.*/GIT_BRANCH=\"$CIVITAI_TOKEN\"/" "$file"
-        sed -i "s/^MODELS_DIR=.*/MODELS_DIR=\"$MODELS_DIR\"/" "$file"
+        sed -i "s|^MODELS_DIR=.*|MODELS_DIR=\"$MODELS_DIR\"|g" "$file"
         echo "Updated .env file: $file"
     else
         echo "Error: File does not exist or is not readable: $file"
