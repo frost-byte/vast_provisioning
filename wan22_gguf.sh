@@ -59,8 +59,10 @@ TEXT_ENCODERS=(
 
 UNET_MODELS=(
     #"https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF/resolve/main/Wan2.2-TI2V-5B-Q8_0.gguf"
-    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q3_K_S.gguf"
-    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q3_K_S.gguf"
+    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q3_K_S.gguf"
+    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q3_K_S.gguf"
+    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q8_0.gguf"
+    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q8_0.gguf"
 )
 
 LORA_MODELS=(
@@ -69,7 +71,6 @@ LORA_MODELS=(
 )
 CIVIT_MODELS=(
     #"https://civitai.com/api/download/models/2057106?type=Archive&format=Other"
-    #"https://civitai.com/api/download/attachments/407126"
     2103699
     2103700
     2073605
@@ -89,6 +90,10 @@ CIVIT_MODELS=(
     2145089
     2122806
     2122834
+    2152516
+    2152583
+    2149614
+    2149593
 )
 DIFFUSION_MODELS=(
     #"https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
