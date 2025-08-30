@@ -2,26 +2,22 @@
   "checkpoints": [
   ],
   "vae": [
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
+    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/VAE/Wan2.1_VAE.safetensors",
   ],
   "unet": [
+    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q5_0.gguf",
+    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q5_0.gguf",
+    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q3_K_M.gguf",
+    "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q3_K_M.gguf"
   ],
   "diffusion_models": [
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors",
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors",
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors",
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors"
   ],
   "text_encoders": [
     "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
   ],
   "loras": [
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_t2v_lightx2v_4steps_lora_v1.1_high_noise.safetensors",
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_t2v_lightx2v_4steps_lora_v1.1_low_noise.safetensors",
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors",
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors",
-    "https://huggingface.co/Patarapoom/model/resolve/main/Instareal_low.safetensors",
-    "https://huggingface.co/Patarapoom/model/resolve/main/Instareal_high.safetensors"
+    "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors",
+    "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors"
   ],
   "upscale_models": [
     "https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth"
@@ -29,10 +25,55 @@
   "controlnet": [
   ],
   "clip_vision": [
+    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
   ],
   "ipadapter": [
   ],
   "style_models": [
   ],
-  "clip": []
+  "clip": [],
+  "nodes": [
+    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts",
+    "https://github.com/cubiq/ComfyUI_essentials",
+    "https://github.com/yolain/ComfyUI-Easy-Use",
+    "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation",
+    "https://github.com/city96/ComfyUI-GGUF",
+    "https://github.com/chrisgoringe/cg-image-filter",
+    "https://github.com/kijai/ComfyUI-KJNodes",
+    "https://github.com/chflame163/ComfyUI_LayerStyle",
+    "https://github.com/aria1th/ComfyUI-LogicUtils",
+    "https://github.com/Comfy-Org/ComfyUI-Manager",
+    "https://github.com/stavsap/comfyui-ollama",
+    "https://github.com/1038lab/ComfyUI-RMBG",
+    "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite",
+    "https://github.com/kijai/ComfyUI-WanVideoWrapper",
+    "https://github.com/ClownsharkBatwing/RES4LYF",
+    "https://github.com/rgthree/rgthree-comfy",
+    "https://github.com/ltdrdata/was-node-suite-comfyui"
+  ],
+  "civit_models": [
+    2103699,
+    2103700,
+    2073605,
+    2083303,
+    2098405,
+    2098396,
+    2116027,
+    2116008,
+    2134314,
+    2127912,
+    2127901,
+    2087124,
+    2087173,
+    2124073,
+    2122049,
+    2145156,
+    2145089,
+    2122806,
+    2122834,
+    2152516,
+    2152583,
+    2149614,
+    2149593
+  ]
 } 
