@@ -30,10 +30,7 @@
   "style_models": [
   ],
   "clip": [],
-  "nodes": [
-    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts",
-    "https://github.com/cubiq/ComfyUI_essentials"
-  ],
+  "nodes": [],
   "civit_models": [
     2103699,
     2103700,
