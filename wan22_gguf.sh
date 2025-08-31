@@ -11,7 +11,15 @@ PIP_PACKAGES=(
     "sageattention"
 )
 NODES=(
+    "https://github.com/Acly/comfyui-inpaint-nodes"
+    "https://github.com/Fannovel16/comfyui_controlnet_aux"
+    "https://github.com/ShmuelRonen/ComfyUI-VideoUpscale_WithModel"
+    "https://github.com/cubiq/ComfyUI_IPAdapter_plus"
+    "https://github.com/justUmen/Bjornulf_custom_nodes"
+    "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler"
     "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
+    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale"
+    "https://github.com/yolain/ComfyUI-Easy-Use-Frontend"
     "https://github.com/cubiq/ComfyUI_essentials"
     "https://github.com/yolain/ComfyUI-Easy-Use"
     "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation"
