@@ -11,7 +11,8 @@
   "diffusion_models": [
   ],
   "text_encoders": [
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors"
   ],
   "loras": [
     "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors",
@@ -28,30 +29,5 @@
   "style_models": [
   ],
   "clip": [],
-  "nodes": [],
-  "civit_models": [
-    2103699,
-    2103700,
-    2073605,
-    2083303,
-    2098405,
-    2098396,
-    2116027,
-    2116008,
-    2134314,
-    2127912,
-    2127901,
-    2087124,
-    2087173,
-    2124073,
-    2122049,
-    2145156,
-    2145089,
-    2122806,
-    2122834,
-    2152516,
-    2152583,
-    2149614,
-    2149593
-  ]
-} 
+  "nodes": []
+}
