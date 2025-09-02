@@ -1,6 +1,13 @@
 #!/bin/bash
 
-source /venv/main/bin/activate
+#sudo apt update; sudo apt install python3.10-venv
+#python3 -m venv comfyui-env
+#comfy install
+#sudo ufw enable
+#sudo ufw allow 22
+#sudo ufw allow 8188
+source /home/user/comfyui-env/bin/activate
+WORKSPACE=/home/user/comfy
 COMFYUI_DIR=${WORKSPACE}/ComfyUI
 CIVIT_CLI_DIR=${WORKSPACE}/civitai-models-cli
 MODELS_DIR=${COMFYUI_DIR}/models/
@@ -8,9 +15,39 @@ CIVIT_ENV_DIR=~/.civitai-model-manager
 CIVIT_CLI_ENV=${CIVIT_ENV_DIR}/.env
 APT_PACKAGES=()
 PIP_PACKAGES=(
+    "comfy-cli"
     "sageattention"
 )
 NODES=(
+    # cg-use-everywhere
+    # cg-image-filter
+    # ComfyMath
+    # ComfyUI-Addoor
+    # comfyui-art-venture
+    # ComfyUI_Comfyroll_CustomNodes
+    # ComfyUI-Custom-Scripts
+    # comfyui-dream-project
+    # Comfyui-ergouzi-Nodes
+    # comfyui-florence2
+    # ComfyUI-FramePackWrapper_PlusOne
+    # ComfyUI-GIMM-VFI
+    # comfyui_HavocsCall_Custom_Nodes
+    # comfyui-image-selector
+    # comfyui-impact-pack
+    # comfyui-inspire-pack
+    # ComfyUI_JPS-Nodes
+    # comfyui_memory_cleanup
+    # comfyui-ollama
+    # comfyui-reactor
+    # comfyui_tinyterranodes
+    # comfyui-various
+    # ComfyUI-VideoHelperSuite
+    # comfyui-vrgamedevgirl
+    # derfuu_comfyui_moddednodes
+    # efficiency-nodes-comfyui
+    # masquerade-nodes-comfyui
+    # was-node-suite-comfyui
+    # wywywywy-pause
     "https://github.com/Acly/comfyui-inpaint-nodes"
     "https://github.com/Fannovel16/comfyui_controlnet_aux"
     "https://github.com/ShmuelRonen/ComfyUI-VideoUpscale_WithModel"
@@ -53,9 +90,9 @@ CLIP_VISION_MODELS=(
 CLIP_MODELS=(
     # "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors"
     # "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
 )
 TEXT_ENCODERS=(
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
     "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
     "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors"
 )
@@ -125,8 +162,6 @@ DIFFUSION_MODELS=(
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors"
     #"https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF/resolve/main/Wan2.2-TI2V-5B-Q8_0.gguf"
-    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q3_K_M.gguf"
-    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q3_K_M.gguf"
     #kijai
     # "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/I2V/Wan2_2-I2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors"
     # "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/I2V/Wan2_2-I2V-A14B-HIGH_fp8_e4m3fn_scaled_KJ.safetensors"
@@ -174,7 +209,7 @@ set_env_details() {
     local file="$1"
     if [ -f "$file" ] && [ -r "$file" ]; then
         # Update branch, hash, and version in the .env file
-        sed -i "s/^CIVITAI_TOKEN=.*/GIT_BRANCH=\"$CIVITAI_TOKEN\"/" "$file"
+        sed -i "s/^CIVITAI_TOKEN=.*/CIVITAI_TOKEN=\"$CIVITAI_TOKEN\"/" "$file"
         sed -i "s|^MODELS_DIR=.*|MODELS_DIR=\"$MODELS_DIR\"|g" "$file"
         echo "Updated .env file: $file"
     else
