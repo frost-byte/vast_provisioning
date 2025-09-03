@@ -13,7 +13,16 @@ CIVIT_CLI_DIR=${WORKSPACE}/civitai-models-cli
 MODELS_DIR=${COMFYUI_DIR}/models/
 CIVIT_ENV_DIR=~/.civitai-model-manager
 CIVIT_CLI_ENV=${CIVIT_ENV_DIR}/.env
-APT_PACKAGES=()
+APT_PACKAGES=(
+    "nano"
+    "Python3.12-dev"
+    "build-essential"
+    "gcloud"
+    "apt-transport-https"
+    "ca-certificates"
+    "gnupg"
+    "curl"
+)
 PIP_PACKAGES=(
     "comfy-cli"
     "sageattention"
@@ -194,6 +203,14 @@ function civit_depends() {
     fi
 }
 
+function provisioning_gcloud() {
+    echo "Installing gcloud SDK"
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    apt-get update && apt-get -y install google-cloud-cli
+    gcloud --version
+}
+
 function provisioning_civit_models_cli() {
     cd $WORKSPACE
     git clone https://github.com/regiellis/civitai-models-cli.git
@@ -219,7 +236,7 @@ set_env_details() {
 
 function provisioning_get_apt_packages() {
     if [[ -n $APT_PACKAGES ]]; then
-        sudo $APT_INSTALL ${APT_PACKAGES[@]}
+        $APT_INSTALL ${APT_PACKAGES[@]}
     fi
 }
 
