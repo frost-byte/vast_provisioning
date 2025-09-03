@@ -85,7 +85,9 @@ NODES=(
 )
 
 WORKFLOWS=()
-
+FACE_RESTORE_MODELS=(
+    "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth"
+)
 VAE_MODELS=(
     #"https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF/resolve/main/VAE/Wan2.2_VAE.safetensors"
     "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/VAE/Wan2.1_VAE.safetensors"
@@ -192,6 +194,7 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/clip" "${CLIP_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/clip_vision" "${CLIP_VISION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/facerestore_models" "${FACE_RESTORE_MODELS[@]}"
     provisioning_civit_models_cli
     provisioning_print_end
 }
