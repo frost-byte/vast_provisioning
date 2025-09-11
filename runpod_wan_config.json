@@ -12,7 +12,6 @@
   "diffusion_models": [
   ],
   "text_encoders": [
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
     "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors",
     "https://huggingface.co/city96/umt5-xxl-encoder-gguf/blob/main/umt5-xxl-encoder-Q5_K_M.gguf"
   ],
@@ -21,10 +20,10 @@
     "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors",
     "https://huggingface.co/Kijai/WanVideo_comfy/blob/main/Wan22-Lightning/Wan2.2-Lightning_I2V-A14B-4steps-lora_HIGH_fp16.safetensors",
     "https://huggingface.co/Kijai/WanVideo_comfy/blob/main/Wan22-Lightning/Wan2.2-Lightning_I2V-A14B-4steps-lora_HIGH_fp16.safetensors",
-    "https://huggingface.co/Kijai/WanVideo_comfy/blob/main/Lightx2v/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank256_bf16.safetensors"
   ],
   "upscale_models": [
-    "https://huggingface.co/Comfy-Org/Real-ESRGAN_repackaged/blob/main/RealESRGAN_x4plus.safetensors"
+    "https://huggingface.co/Comfy-Org/Real-ESRGAN_repackaged/blob/main/RealESRGAN_x4plus.safetensors",
+    "https://huggingface.co/lokCX/4x-Ultrasharp/resolve/main/4x-UltraSharp.pth"
   ],
   "controlnet": [
   ],

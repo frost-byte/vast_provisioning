@@ -7,16 +7,22 @@
 #sudo ufw allow 22
 #sudo ufw allow 8188
 source /home/user/comfyui-env/bin/activate
-WORKSPACE=/home/user/comfy
+WORKSPACE=/workspace
+SECRETS=$WORKSPACE/secrets
 COMFYUI_DIR=${WORKSPACE}/ComfyUI
+WORKFLOWS_DIR=${COMFYUI_DIR}/user/default/workflows
 CIVIT_CLI_DIR=${WORKSPACE}/civitai-models-cli
 MODELS_DIR=${COMFYUI_DIR}/models/
+LORAS_DIR=${MODELS_DIR}/loras
+UNETS_DIR=${MODELS_DIR}/unet
+NODES_DIR=${COMFYUI_DIR}/custom_nodes
 CIVIT_ENV_DIR=~/.civitai-model-manager
 CIVIT_CLI_ENV=${CIVIT_ENV_DIR}/.env
 APT_PACKAGES=(
     "nano"
     "Python3.12-dev"
     "build-essential"
+    "coreutils"
     "gcloud"
     "apt-transport-https"
     "ca-certificates"
@@ -113,7 +119,7 @@ UNET_MODELS=(
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q3_K_S.gguf"
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q3_K_S.gguf"
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q8_0.gguf"
-    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q8_0.gguf"
+    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q8_0.ggu0f"
 )
 
 LORA_MODELS=(
@@ -121,7 +127,20 @@ LORA_MODELS=(
     "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors"
 )
 CIVIT_MODELS=(
-    #"https://civitai.com/api/download/models/2057106?type=Archive&format=Other"
+    #"https://civitai.com/api/download/models/2057106"
+    #https://civitai.com/api/download/models/1934867
+    #https://civarchive.com/models/1684874?modelVersionId=1934867
+    #https://civarchive.com/models/1814871?modelVersionId=2161335
+    #https://civarchive.com/models/1814871?modelVersionId=2161329
+    2124073
+    2122049
+    2178869
+    2176450
+    2161335
+    2161329
+    1934867
+    1571626
+    1620834
     2103699
     2103700
     2073605
@@ -135,8 +154,6 @@ CIVIT_MODELS=(
     2127901
     2087124
     2087173
-    2124073
-    2122049
     2145156
     2145089
     2122806
@@ -165,14 +182,13 @@ CIVIT_MODELS=(
     1538301
     1545040
     1587648
+    2028794 # wan2.1 "r3turnth15rsacp"
 )
 DIFFUSION_MODELS=(
-    #"https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_t2v_1.3B_fp16.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors"
-    #"https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF/resolve/main/Wan2.2-TI2V-5B-Q8_0.gguf"
     #kijai
     # "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/I2V/Wan2_2-I2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors"
     # "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/I2V/Wan2_2-I2V-A14B-HIGH_fp8_e4m3fn_scaled_KJ.safetensors"
@@ -206,12 +222,41 @@ function civit_depends() {
     fi
 }
 
+# Requires GCP_SA_KEY_B64 env variable to be set (base64 encoded service account key
+# Also include project id as and env variable GCP_PROJECT_ID,GCP_PROJECT
 function provisioning_gcloud() {
-    echo "Installing gcloud SDK"
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-    apt-get update && apt-get -y install google-cloud-cli
-    gcloud --version
+    if [[ -n "${GCP_SA_KEY_B64:-}" ]]; then
+        mkdir -p $SECRETS && chmod 700 $SECRETS
+        echo "$GCP_SA_KEY_B64" | base64 -d > $SECRETS/gcp-sa.json
+        chmod 600 $SECRETS/gcp-sa.json
+        export GOOGLE_APPLICATION_CREDENTIALS=$SECRETS/gcp-sa.json
+        gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS" || true
+        echo "Installing gcloud SDK"
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+        apt-get update && apt-get -y install google-cloud-cli
+        gcloud --version
+        # CLOUDSDK_CORE_PROJECT
+        gcloud config set project "$GCP_PROJECT_ID"
+    fi
+}
+
+function gcloud_storage_get() {
+    if [[ -n "${GCP_PROJECT_ID:-}" ]]; then
+        #gcloud storage rsync "gs://${GCP_BUCKET}${MODELS_DIR}" "$MODELS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}${LORAS_DIR}" "$LORAS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
+        #gcloud storage rsync "gs://${GCP_BUCKET}${NODES_DIR}" "$NODES_DIR"
+    fi
+}
+
+function gcloud_storage_put() {
+    if [[ -n "${GCP_PROJECT_ID:-}" ]]; then
+        #gcloud storage rsync "$MODELS_DIR" "gs://${GCP_BUCKET}${MODELS_DIR}"
+        gcloud storage rsync "$LORAS_DIR" "gs://${GCP_BUCKET}${LORAS_DIR}"
+        gcloud storage rsync "$WORKFLOWS_DIR" "gs://${GCP_BUCKET}${WORKFLOWS_DIR}"
+        #gcloud storage rsync "$NODES_DIR" "gs://${GCP_BUCKET}${NODES_DIR}"
+    fi
 }
 
 function provisioning_civit_models_cli() {
@@ -239,6 +284,7 @@ set_env_details() {
 
 function provisioning_get_apt_packages() {
     if [[ -n $APT_PACKAGES ]]; then
+        apt-get update
         $APT_INSTALL ${APT_PACKAGES[@]}
     fi
 }
@@ -330,7 +376,7 @@ function provisioning_has_valid_civitai_token() {
 function provisioning_download() {
     if [[ -n $HF_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
         auth_token="$HF_TOKEN"
-    elif 
+    elif
         [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
         auth_token="$CIVITAI_TOKEN"
     fi
@@ -343,4 +389,6 @@ function provisioning_download() {
 
 if [[ ! -f /.noprovisioning ]]; then
     provisioning_start
+    #gcloud_storage_put
+    gcloud_storage_get
 fi
