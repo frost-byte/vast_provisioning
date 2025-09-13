@@ -6,15 +6,15 @@
 #sudo ufw enable
 #sudo ufw allow 22
 #sudo ufw allow 8188
-source /home/user/comfyui-env/bin/activate
+#source /home/user/comfyui-env/bin/activate
 WORKSPACE=/workspace
 SECRETS=$WORKSPACE/secrets
 COMFYUI_DIR=${WORKSPACE}/ComfyUI
 WORKFLOWS_DIR=${COMFYUI_DIR}/user/default/workflows
 CIVIT_CLI_DIR=${WORKSPACE}/civitai-models-cli
 MODELS_DIR=${COMFYUI_DIR}/models/
-LORAS_DIR=${MODELS_DIR}/loras
-UNETS_DIR=${MODELS_DIR}/unet
+LORAS_DIR=${MODELS_DIR}loras
+UNETS_DIR=${MODELS_DIR}unet
 NODES_DIR=${COMFYUI_DIR}/custom_nodes
 CIVIT_ENV_DIR=~/.civitai-model-manager
 CIVIT_CLI_ENV=${CIVIT_ENV_DIR}/.env
@@ -30,7 +30,7 @@ APT_PACKAGES=(
     "curl"
 )
 PIP_PACKAGES=(
-    "comfy-cli"
+    #"comfy-cli"
     "sageattention"
 )
 NODES=(
@@ -109,8 +109,8 @@ CLIP_MODELS=(
     # "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
 )
 TEXT_ENCODERS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+    #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+    #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
     "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors"
 )
 
@@ -173,7 +173,9 @@ CIVIT_MODELS=(
     1606639
     1947888
     1585322
+    1516873
     1600755
+    1975021
     2099692
     1549343
     1590885
@@ -183,6 +185,11 @@ CIVIT_MODELS=(
     1545040
     1587648
     2028794 # wan2.1 "r3turnth15rsacp"
+    2088443
+    2088264
+    1358184
+    1534254
+    1768094
 )
 DIFFUSION_MODELS=(
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors"
@@ -230,7 +237,7 @@ function provisioning_gcloud() {
         echo "$GCP_SA_KEY_B64" | base64 -d > $SECRETS/gcp-sa.json
         chmod 600 $SECRETS/gcp-sa.json
         export GOOGLE_APPLICATION_CREDENTIALS=$SECRETS/gcp-sa.json
-        gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS" || true
+        gcloud auth activate-service-account "$GCP_SERVICE_ACCT" --key-file="$GOOGLE_APPLICATION_CREDENTIALS" || true
         echo "Installing gcloud SDK"
         curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -243,19 +250,19 @@ function provisioning_gcloud() {
 
 function gcloud_storage_get() {
     if [[ -n "${GCP_PROJECT_ID:-}" ]]; then
-        #gcloud storage rsync "gs://${GCP_BUCKET}${MODELS_DIR}" "$MODELS_DIR"
-        gcloud storage rsync "gs://${GCP_BUCKET}${LORAS_DIR}" "$LORAS_DIR"
-        gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
-        #gcloud storage rsync "gs://${GCP_BUCKET}${NODES_DIR}" "$NODES_DIR"
+        #gcloud storage rsync "gs://${GCP_BUCKET}/${MODELS_DIR}" "$MODELS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}/${LORAS_DIR}" "$LORAS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}/${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
+        #gcloud storage rsync "gs://${GCP_BUCKET}/${NODES_DIR}" "$NODES_DIR"
     fi
 }
 
 function gcloud_storage_put() {
     if [[ -n "${GCP_PROJECT_ID:-}" ]]; then
         #gcloud storage rsync "$MODELS_DIR" "gs://${GCP_BUCKET}${MODELS_DIR}"
-        gcloud storage rsync "$LORAS_DIR" "gs://${GCP_BUCKET}${LORAS_DIR}"
-        gcloud storage rsync "$WORKFLOWS_DIR" "gs://${GCP_BUCKET}${WORKFLOWS_DIR}"
-        #gcloud storage rsync "$NODES_DIR" "gs://${GCP_BUCKET}${NODES_DIR}"
+        gcloud storage rsync "$LORAS_DIR" "gs://${GCP_BUCKET}/${LORAS_DIR}"
+        gcloud storage rsync "$WORKFLOWS_DIR" "gs://${GCP_BUCKET}/${WORKFLOWS_DIR}"
+        #gcloud storage rsync "$NODES_DIR" "gs://${GCP_BUCKET}/${NODES_DIR}"
     fi
 }
 
