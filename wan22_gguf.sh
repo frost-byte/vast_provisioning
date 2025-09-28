@@ -7,13 +7,18 @@
 #sudo ufw allow 22
 #sudo ufw allow 8188
 #source /home/user/comfyui-env/bin/activate
+source /opt/venv/bin/activate
+
 WORKSPACE=/workspace
 SECRETS=$WORKSPACE/secrets
 COMFYUI_DIR=${WORKSPACE}/ComfyUI
+OUTPUT_DIR=${COMFYUI_DIR}/output
+INPUT_DIR=${COMFYUI_DIR}/input
 WORKFLOWS_DIR=${COMFYUI_DIR}/user/default/workflows
 CIVIT_CLI_DIR=${WORKSPACE}/civitai-models-cli
 MODELS_DIR=${COMFYUI_DIR}/models/
 LORAS_DIR=${MODELS_DIR}loras
+VAE_DIR=${MODELS_DIR}vae
 UNETS_DIR=${MODELS_DIR}unet
 NODES_DIR=${COMFYUI_DIR}/custom_nodes
 CIVIT_ENV_DIR=~/.civitai-model-manager
@@ -23,15 +28,27 @@ APT_PACKAGES=(
     "Python3.12-dev"
     "build-essential"
     "coreutils"
-    "gcloud"
+    "zip"
     "apt-transport-https"
     "ca-certificates"
     "gnupg"
     "curl"
+    "cmake"
+    "libgl1"
+    "libglib2.0-0"
 )
 PIP_PACKAGES=(
     #"comfy-cli"
-    "sageattention"
+    #"sageattention"
+    "pip"
+    "setuptools"
+    "wheel"
+    "cmake"
+    "onnxruntime-gpu"
+    "onnxruntime"
+    "insightface==0.7.3"
+    "ultralytics"
+#    "soxr"
 )
 NODES=(
     # cg-use-everywhere
@@ -94,9 +111,13 @@ WORKFLOWS=()
 FACE_RESTORE_MODELS=(
     "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth"
 )
+UPSCALE_MODELS=(
+    "https://huggingface.co/Kim2091/UltraSharp/resolve/main/4x-UltraSharp.pth"
+)
 VAE_MODELS=(
     #"https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF/resolve/main/VAE/Wan2.2_VAE.safetensors"
     "https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/VAE/Wan2.1_VAE.safetensors"
+    "https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan2.2_vae.safetensors"
 )
@@ -111,6 +132,7 @@ CLIP_MODELS=(
 TEXT_ENCODERS=(
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+    "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors"
     "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors"
 )
 
@@ -119,7 +141,8 @@ UNET_MODELS=(
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q3_K_S.gguf"
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q3_K_S.gguf"
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q8_0.gguf"
-    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q8_0.ggu0f"
+    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q8_0.gguf"
+    #"https://huggingface.co/wsbagnsv1/SkyReels-V2-DF-14B-720P-GGUF/resolve/main/Skywork-SkyReels-V2-DF-14B-720P-Q8_0.gguf"
 )
 
 LORA_MODELS=(
@@ -163,14 +186,12 @@ CIVIT_MODELS=(
     2149614
     2149593
     1652726
-    1606639
     2156392
     2156435
     1752839
     2077123
     2077119
     1860691
-    1606639
     1947888
     1585322
     1516873
@@ -190,8 +211,38 @@ CIVIT_MODELS=(
     1358184
     1534254
     1768094
+    2095954
+    2095952
+    2185444
+    2185457
+    2055564
+    2177091
+    1996461
+    2202387
+    2202386
+    2176200
+    2176194
+    1475095
+    1816434
+    1855263
+    2221413
+    2221311
+    2183383
+    2183388
+    2215517
+    2215698
+    2235299
+    2235288
+    1652726
+    2149614
+    2176194
+    1960177
+    1606639
+    1666048
+    1599906
 )
 DIFFUSION_MODELS=(
+     "https://huggingface.co/black-forest-labs/FLUX.1-Fill-dev/resolve/main/flux1-fill-dev.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors"
     #"https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors"
@@ -206,7 +257,10 @@ function provisioning_start() {
     provisioning_get_apt_packages
     provisioning_get_nodes
     provisioning_get_pip_packages
-
+    provisioning_gcloud
+    sage_attention
+    #gcloud_storage_get
+    gcloud_storage_put
     workflows_dir="${COMFYUI_DIR}/user/default/workflows"
     mkdir -p "${workflows_dir}"
     provisioning_get_files "${workflows_dir}" "${WORKFLOWS[@]}"
@@ -218,6 +272,7 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/clip_vision" "${CLIP_VISION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/facerestore_models" "${FACE_RESTORE_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/upscale_models" "${UPSCALE_MODELS[@]}"
     provisioning_civit_models_cli
     provisioning_print_end
 }
@@ -229,15 +284,31 @@ function civit_depends() {
     fi
 }
 
+function sage_attention() {
+    wget https://developer.download.nvidia.com/compute/cuda/12.8.0/local_installers/cuda-repo-ubuntu2404-12-8-local_12.8.0-570.86.10-1_amd64.deb
+    dpkg -i cuda-repo-ubuntu2404-12-8-local_12.8.0-570.86.10-1_amd64.deb
+    cp /var/cuda-repo-ubuntu2404-12-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
+    apt-get update
+    apt-get -y install cuda-toolkit-12-8
+    echo 'export PATH=/usr/local/cuda-12.8/bin:$PATH' | sudo tee /etc/profile.d/cuda.sh
+    echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.8/lib64:${LD_LIBRARY_PATH}' | sudo tee -a /etc/profile.d/cuda.sh
+    source /etc/profile.d/cuda.sh
+    which nvcc && nvcc --version
+    cd $WORKSPACE
+    # install deps, then build SageAttention from source
+    git clone https://github.com/thu-ml/SageAttention
+    cd SageAttention
+    python setup.py install
+}
+
 # Requires GCP_SA_KEY_B64 env variable to be set (base64 encoded service account key
-# Also include project id as and env variable GCP_PROJECT_ID,GCP_PROJECT
+# Also include project id as and env variable GCP_PROJECT_ID,GCP_PROJECT, and include GCP_SERVICE_ACCT
 function provisioning_gcloud() {
     if [[ -n "${GCP_SA_KEY_B64:-}" ]]; then
         mkdir -p $SECRETS && chmod 700 $SECRETS
         echo "$GCP_SA_KEY_B64" | base64 -d > $SECRETS/gcp-sa.json
         chmod 600 $SECRETS/gcp-sa.json
         export GOOGLE_APPLICATION_CREDENTIALS=$SECRETS/gcp-sa.json
-        gcloud auth activate-service-account "$GCP_SERVICE_ACCT" --key-file="$GOOGLE_APPLICATION_CREDENTIALS" || true
         echo "Installing gcloud SDK"
         curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -245,24 +316,33 @@ function provisioning_gcloud() {
         gcloud --version
         # CLOUDSDK_CORE_PROJECT
         gcloud config set project "$GCP_PROJECT_ID"
+        gcloud auth activate-service-account "$GCP_SERVICE_ACCT" --key-file="$SECRETS/gcp-sa.json" || true
     fi
 }
 
 function gcloud_storage_get() {
     if [[ -n "${GCP_PROJECT_ID:-}" ]]; then
-        #gcloud storage rsync "gs://${GCP_BUCKET}/${MODELS_DIR}" "$MODELS_DIR"
-        gcloud storage rsync "gs://${GCP_BUCKET}/${LORAS_DIR}" "$LORAS_DIR"
-        gcloud storage rsync "gs://${GCP_BUCKET}/${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
-        #gcloud storage rsync "gs://${GCP_BUCKET}/${NODES_DIR}" "$NODES_DIR"
+        #gcloud storage rsync "gs://${GCP_BUCKET}${MODELS_DIR}" "$MODELS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}${LORAS_DIR}" "$LORAS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
+        #gcloud storage rsync "gs://${GCP_BUCKET}${NODES_DIR}" "$NODES_DIR"
     fi
 }
-
+#        gcloud storage cp "/workspace/wan22_gguf.sh" "gs://${GCP_BUCKET}/workspace/wan22_gguf.sh"
+#        gcloud storage cp "/workspace/sanity_sage.py" "gs://${GCP_BUCKET}/workspace/sanity_sage.py"
 function gcloud_storage_put() {
     if [[ -n "${GCP_PROJECT_ID:-}" ]]; then
         #gcloud storage rsync "$MODELS_DIR" "gs://${GCP_BUCKET}${MODELS_DIR}"
-        gcloud storage rsync "$LORAS_DIR" "gs://${GCP_BUCKET}/${LORAS_DIR}"
-        gcloud storage rsync "$WORKFLOWS_DIR" "gs://${GCP_BUCKET}/${WORKFLOWS_DIR}"
-        #gcloud storage rsync "$NODES_DIR" "gs://${GCP_BUCKET}/${NODES_DIR}"
+        gcloud storage cp "$WORKSPACE/wan22_gguf.sh" "gs://${GCP_BUCKET}${WORKSPACE}/wan22_gguf.sh"
+ #       gcloud storage rsync "$LORAS_DIR" "gs://${GCP_BUCKET}${LORAS_DIR}"
+        gcloud storage rsync "$WORKFLOWS_DIR" "gs://${GCP_BUCKET}${WORKFLOWS_DIR}"
+        zip -r "$OUTPUT_DIR/output.zip" $OUTPUT_DIR -x "$OUTPUT_DIR/output.zip"
+        gcloud storage cp "$OUTPUT_DIR/output.zip" "gs://${GCP_BUCKET}/output.zip"
+        zip "$INPUT_DIR/input.zip" $INPUT_DIR -x "$INPUT_DIR/input.zip"
+        gcloud storage cp "$INPUT_DIR/input.zip" "gs://${GCP_BUCKET}/input.zip"
+        #gcloud storage rsync "$OUTPUT_DIR" "gs://${GCP_BUCKET}${OUTPUT__DIR}"
+#        gcloud storage rsync "$NODES_DIR" "gs://${GCP_BUCKET}${NODES_DIR}"
     fi
 }
 
@@ -299,6 +379,8 @@ function provisioning_get_apt_packages() {
 function provisioning_get_pip_packages() {
     if [[ -n $PIP_PACKAGES ]]; then
         pip install --no-cache-dir ${PIP_PACKAGES[@]}
+        pip uninstall -y soxr
+        pip install soxr
     fi
 }
 
