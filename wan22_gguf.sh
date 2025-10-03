@@ -86,6 +86,7 @@ NODES=(
     "https://github.com/cubiq/ComfyUI_IPAdapter_plus"
     "https://github.com/justUmen/Bjornulf_custom_nodes"
     "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler"
+    "https://github.com/crystian/ComfyUI-Crystools"
     "https://github.com/pythongosssss/ComfyUI-Custom-Scripts"
     "https://github.com/ssitu/ComfyUI_UltimateSDUpscale"
     "https://github.com/yolain/ComfyUI-Easy-Use-Frontend"
@@ -96,10 +97,12 @@ NODES=(
     "https://github.com/chrisgoringe/cg-image-filter"
     "https://github.com/kijai/ComfyUI-KJNodes"
     "https://github.com/chflame163/ComfyUI_LayerStyle"
+    "https://github.com/theUpsider/ComfyUI-Logic"
     "https://github.com/aria1th/ComfyUI-LogicUtils"
     "https://github.com/Comfy-Org/ComfyUI-Manager"
     "https://github.com/stavsap/comfyui-ollama"
     "https://github.com/1038lab/ComfyUI-RMBG"
+    "https://github.com/r-vage/ComfyUI-RvTools_v2"
     "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
     "https://github.com/kijai/ComfyUI-WanVideoWrapper"
     "https://github.com/ClownsharkBatwing/RES4LYF"
@@ -138,8 +141,8 @@ TEXT_ENCODERS=(
 
 UNET_MODELS=(
     #"https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF/resolve/main/Wan2.2-TI2V-5B-Q8_0.gguf"
-    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q3_K_S.gguf"
-    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q3_K_S.gguf"
+    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q5_1.gguf"
+    #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q5_1.gguf"
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/LowNoise/Wan2.2-I2V-A14B-LowNoise-Q8_0.gguf"
     #"https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/resolve/main/HighNoise/Wan2.2-I2V-A14B-HighNoise-Q8_0.gguf"
     #"https://huggingface.co/wsbagnsv1/SkyReels-V2-DF-14B-720P-GGUF/resolve/main/Skywork-SkyReels-V2-DF-14B-720P-Q8_0.gguf"
@@ -240,6 +243,21 @@ CIVIT_MODELS=(
     1606639
     1666048
     1599906
+    2243201
+    2243217
+    2248727
+    2249697
+    2249683
+    2183383
+    2183388
+    2221413
+    2221311
+    2215731
+    2085376
+    2197409
+    2085369
+    1682350
+    2204122
 )
 DIFFUSION_MODELS=(
      "https://huggingface.co/black-forest-labs/FLUX.1-Fill-dev/resolve/main/flux1-fill-dev.safetensors"
