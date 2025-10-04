@@ -48,7 +48,7 @@ PIP_PACKAGES=(
     "onnxruntime"
     "insightface==0.7.3"
     "ultralytics"
-#    "soxr"
+#    "soxr==0.3.7"
 )
 NODES=(
     # cg-use-everywhere
@@ -157,6 +157,8 @@ UNET_MODELS=(
 LORA_MODELS=(
     "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors"
     "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors"
+    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan22-Lightning/Wan2.2-Lightning_I2V-A14B-4steps-lora_HIGH_fp16.safetensors"
+    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan22-Lightning/Wan2.2-Lightning_I2V-A14B-4steps-lora_LOW_fp16.safetensors"
 )
 CIVIT_MODELS=(
     #"https://civitai.com/api/download/models/2057106"
@@ -264,6 +266,11 @@ CIVIT_MODELS=(
     2085369
     1682350
     2204122
+    2248681
+    2250571
+    2250590
+    2183000
+    2182983
 )
 DIFFUSION_MODELS=(
      "https://huggingface.co/black-forest-labs/FLUX.1-Fill-dev/resolve/main/flux1-fill-dev.safetensors"
@@ -282,9 +289,9 @@ function provisioning_start() {
     provisioning_get_nodes
     provisioning_get_pip_packages
     provisioning_gcloud
-    sage_attention
-    #gcloud_storage_get
-    gcloud_storage_put
+    #sage_attention # may not be necessary, just use the right quantized model in the sage attention options, (triton jit)
+    gcloud_storage_get
+    #gcloud_storage_put
     workflows_dir="${COMFYUI_DIR}/user/default/workflows"
     mkdir -p "${workflows_dir}"
     provisioning_get_files "${workflows_dir}" "${WORKFLOWS[@]}"
@@ -314,8 +321,8 @@ function sage_attention() {
     cp /var/cuda-repo-ubuntu2404-12-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
     apt-get update
     apt-get -y install cuda-toolkit-12-8
-    echo 'export PATH=/usr/local/cuda-12.8/bin:$PATH' | sudo tee /etc/profile.d/cuda.sh
-    echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.8/lib64:${LD_LIBRARY_PATH}' | sudo tee -a /etc/profile.d/cuda.sh
+    echo 'export PATH=/usr/local/cuda-12.8/bin:$PATH' | tee /etc/profile.d/cuda.sh
+    echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.8/lib64:${LD_LIBRARY_PATH}' | tee -a /etc/profile.d/cuda.sh
     source /etc/profile.d/cuda.sh
     which nvcc && nvcc --version
     cd $WORKSPACE
@@ -348,9 +355,9 @@ function gcloud_storage_get() {
     if [[ -n "${GCP_PROJECT_ID:-}" ]]; then
         #gcloud storage rsync "gs://${GCP_BUCKET}${MODELS_DIR}" "$MODELS_DIR"
         gcloud storage rsync "gs://${GCP_BUCKET}${LORAS_DIR}" "$LORAS_DIR"
-        gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
-        gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
-        #gcloud storage rsync "gs://${GCP_BUCKET}${NODES_DIR}" "$NODES_DIR"
+        #gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
+        #gcloud storage rsync "gs://${GCP_BUCKET}${WORKFLOWS_DIR}" "$WORKFLOWS_DIR"
+        gcloud storage rsync "gs://${GCP_BUCKET}${NODES_DIR}" "$NODES_DIR"
     fi
 }
 #        gcloud storage cp "/workspace/wan22_gguf.sh" "gs://${GCP_BUCKET}/workspace/wan22_gguf.sh"
@@ -404,7 +411,8 @@ function provisioning_get_pip_packages() {
     if [[ -n $PIP_PACKAGES ]]; then
         pip install --no-cache-dir ${PIP_PACKAGES[@]}
         pip uninstall -y soxr
-        pip install soxr
+        pip install soxr # specify a different version (not 1.0, perhaps 0.3.7?) also it's a sound library, so not really needed
+        # but it is a requirement of some custom nodes that provide audio alertsw
     fi
 }
 
